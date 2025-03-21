@@ -24,6 +24,9 @@ urlpatterns = [
     path('sign-up', views.sign_up, name='sign-up'),
     path('users/',views.all_user,name='users'),
 
-    path('update-post<int:post_id>' , views.update_post , name="update-post" )
+    path('update-post<int:post_id>' , views.update_post , name="update-post" ),
+
+
+    path('share',views.share_edit_permition, name='share')
 
 ]

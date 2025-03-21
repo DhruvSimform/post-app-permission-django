@@ -168,3 +168,20 @@ def all_user(request):
     
     else:
         return HttpResponseForbidden("You are not super user")
+    
+@login_required()
+def share_edit_permition(request):
+    if request.method == "POST":
+        post_id = request.POST['post-id']
+        username = request.POST['username']
+        user = get_object_or_404(User,username=username)
+        # print(post_id,username)
+        post = get_object_or_404(Post , id=post_id)
+
+        assign_perm('change_post',user,post)
+
+
+
+    return redirect('home')
+
+
