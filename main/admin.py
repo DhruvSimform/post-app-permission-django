@@ -1,6 +1,13 @@
 from django.contrib import admin
-from .models import Post
-# Register your models here.
+from main.models import Post
+from guardian.admin import GuardedModelAdmin
 
+# Old way:
+#class AuthorAdmin(admin.ModelAdmin):
+#    pass
 
-admin.site.register(Post)
+# With object permissions support
+class PostAdmin(GuardedModelAdmin):
+    pass
+
+admin.site.register(Post, PostAdmin)

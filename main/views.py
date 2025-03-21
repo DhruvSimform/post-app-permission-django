@@ -5,8 +5,36 @@ from django.contrib.auth import login , logout , authenticate
 from django.contrib.auth.decorators import login_required ,permission_required
 from .models import Post 
 from django.contrib.auth.models import User , Group , Permission 
+from guardian.shortcuts import assign_perm
+# from utis import object_permission_required
 
 # Create your views here.
+from functools import wraps
+from django.core.exceptions import PermissionDenied
+from django.shortcuts import get_object_or_404
+from .models import Post  # Import your model
+
+def object_permission_required(permission, model, lookup_field='id', obj_kwarg='post_id'):
+    """
+    A decorator to check object-level permissions when only the object ID is passed.
+
+    :param permission: The required permission (e.g., 'main.change_post').
+    :param model: The model class (e.g., Post).
+    :param lookup_field: The field name used to retrieve the object (default: 'id').
+    :param obj_kwarg: The keyword argument name that holds the object ID (default: 'post_id').
+    """
+    def decorator(view_func):
+        @wraps(view_func)
+        def _wrapped_view(request, *args, **kwargs):
+            obj_id = kwargs.get(obj_kwarg)
+            obj = get_object_or_404(model, **{lookup_field: obj_id})  # Fetch the object
+
+            if not request.user.has_perm(permission, obj):
+                raise PermissionDenied  # Return 403 if permission is not granted
+            
+            return view_func(request, *args, **kwargs)
+        return _wrapped_view
+    return decorator
 
 
 @login_required()
@@ -50,7 +78,7 @@ def home(request):
 
 
 @login_required()
-@permission_required('main.add_post' , raise_exception=True)
+@permission_required(perm='main.add_post')
 def create_post(request):
 
     if request.method == "POST":
@@ -65,6 +93,29 @@ def create_post(request):
     else: 
         form = PostForm()
 
+    context = {
+        'form':form
+    }
+    return render(request , 'main/create-form.html',context )
+
+@object_permission_required(permission='main.change_post' , model=Post)
+def update_post(request,post_id):
+
+    post = get_object_or_404(Post , id=post_id)
+    if request.method == "POST":
+        form  = PostForm(request.POST,instance=post)
+
+        if form.is_valid():
+            title = form.cleaned_data.get('title')
+            description = form.cleaned_data.get('description')
+
+            post.title =title
+            post.description = description
+            post.save()
+
+            return redirect('home')
+    
+    form = PostForm(instance=post)
     context = {
         'form':form
     }

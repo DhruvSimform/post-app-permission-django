@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'main.apps.MainConfig',
     'crispy_forms',
     'crispy_bootstrap5',
+    'guardian',
 
 ]
 
@@ -137,3 +138,7 @@ LOGIN_REDIRECT_URL = '/'
 LOGIN_URL='/login'
 LOGOUT_REDIRECT_URL = '/login'
 
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend', # default
+    'guardian.backends.ObjectPermissionBackend',
+)

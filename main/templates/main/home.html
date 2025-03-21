@@ -1,5 +1,5 @@
 {% extends "main/base.html" %}
-
+{% load guardian_tags %}
 {% block title %}Home Page{% endblock title %}
 
 {% block content %}
@@ -16,7 +16,8 @@
       <div>
 
         {% comment %} {% if  user == post.author%} {% endcomment %}
-
+        {% get_obj_perms request.user for post as "post_perms" %}
+        {% if "delete_post" in post_perms  %}
         <form method="post">
           {% csrf_token %}
           <button
@@ -29,6 +30,34 @@
           </button>
         </form>
 
+        {% elif perms.main.delete_post %}
+        <form method="post">
+          {% csrf_token %}
+          <button
+            type="submit"
+            class="btn btn-danger"
+            name="post-id"
+            value="{{post.id}}"
+          >
+            Delete
+          </button>
+        </form>
+        {% endif %}
+
+
+
+        {% if "change_post" in post_perms %}
+        <a
+        class="btn btn-danger m-2"
+        name="post-id"
+        value="{{post.id}}"
+
+
+        href ="{% url "update-post" post.id%}"
+      >
+        Update
+      </a>
+      {% endif %}
         {% if user.is_staff %}
         <form method="post">
           {% csrf_token %}
