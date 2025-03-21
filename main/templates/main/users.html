@@ -1,0 +1,88 @@
+{% extends "main/base.html" %}
+{% load group_filters %}
+
+{% block title %}Users{% endblock title %}
+
+
+{% block content %}
+
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">username</th>
+        <th scope="col">Role</th>
+        <!-- <th scope="col">super user</th>
+        <th scope="col">mod</th>
+        <th scope="col">defult</th>
+        <th scope="col">ban</th> -->
+
+
+      </tr>
+    </thead>
+    <tbody class="table-group-divider">
+
+        {% for user in users %}
+      <tr>
+        <th scope="row">{{forloop.counter}}</th>
+        <td>{{user.username}}</td>
+
+
+        <td>
+
+            <form method="post" id="{{user.id}}">
+                {% csrf_token %}
+
+                <select name="group" id="group"   onchange="document.getElementById('{{user.id}}').submit();">
+                    {% comment %} <option value="">No Role </option> {% endcomment %}
+                    <option value="defult" {% if user|in_group:"defult" %}selected {% endif %} >Defult</option>
+                    <option value="ban" {% if user|in_group:"ban" %}selected {% endif %}   >Ban</option>
+                    <option value="mod" {% if user|in_group:"mod" %}selected {% endif %}   >Mod</option>
+
+
+                </select>
+                <input type="hidden" name="user-id" value="{{user.id}}">
+                <button type="submit" hidden value="{{user.id}}">submit</button>
+            </form>
+
+        </td>
+
+
+        <!-- <td>
+            {% if user.is_superuser %}
+            True 
+            {% endif %}</td>
+
+        <td>
+
+            {% if user|in_group:"mod" %}
+            True 
+            {% endif %}
+        </td>
+
+        <td>
+
+            {% if user|in_group:"defult" %}
+            True 
+            {% endif %}
+        </td>
+
+        <td>
+
+            {% if user|in_group:"ban" %}
+            True 
+            {% endif %}
+        </td> -->
+
+      </tr>
+      {% endfor %}
+
+    </tbody>
+  </table>
+
+<script>
+    
+</script>
+
+
+{% endblock content %}
