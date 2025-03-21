@@ -47,7 +47,7 @@ def home(request):
         print(user_id)
         
 
-        if post_id:
+        if post_id and user.has_perm('main.delete_post'):
             post= get_object_or_404(Post,id=post_id)
             if (request.user == post.author) or request.user.has_perm("main.delete_post"):
                 post.delete()

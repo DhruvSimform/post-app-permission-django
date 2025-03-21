@@ -71,7 +71,8 @@ Share Editing
 
 
 
-        {% if user.is_staff %}
+        {% if user.is_staff%}
+        {% if post.author != user %}
         <form method="post">
           {% csrf_token %}
           <button
@@ -83,6 +84,7 @@ Share Editing
             ban
           </button>
         </form>
+        {% endif %}
         {% endif %}
         {% comment %} {% endif %} {% endcomment %}
 
