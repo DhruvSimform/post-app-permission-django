@@ -14,7 +14,7 @@ from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
 from .models import Post  # Import your model
 
-def object_permission_required(permission, model, lookup_field='id', obj_kwarg='pk'):
+def object_permission_required(permission, model, lookup_field='id', obj_kwarg='post_id'):
     """
     A decorator to check object-level permissions when only the object ID is passed.
  
@@ -105,7 +105,7 @@ def create_post(request):
     }
     return render(request , 'main/create-form.html',context )
 
-@object_permission_required(permission='main.change_post' , model=Post)
+@object_permission_required(permission='main.change_post' , model=Post )  
 def update_post(request,post_id):
 
     post = get_object_or_404(Post , id=post_id)
