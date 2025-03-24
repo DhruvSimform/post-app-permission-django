@@ -22,3 +22,5 @@ urlpatterns = [
     path('', include('django.contrib.auth.urls')),
     path('admin/',admin.site.urls)
 ]
+
+handler404 = "main.views.custom_404_view"
