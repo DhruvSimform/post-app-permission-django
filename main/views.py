@@ -45,19 +45,17 @@ def object_permission_required(permission, model, lookup_field='id', obj_kwarg='
 
 
 @login_required()
-def home(request):
+def home(request ):
 
     if request.method == "POST":
-
         post_id = request.POST.get('post-id')
-        user_id = request.POST.get('user-id')
-        print(user_id)
-        
-
-        if post_id and user.has_perm('main.delete_post'):
+        user_id = request.POST.get('user-id',None) 
+       
+        if post_id :
             post= get_object_or_404(Post,id=post_id)
             if (request.user == post.author) or request.user.has_perm("main.delete_post"):
                 post.delete()
+            
             else:
                 return HttpResponseForbidden("You can  Only delete your post . <br> don't try to bee over smart by deleting other post")
             
@@ -85,7 +83,7 @@ def home(request):
 
 
 @login_required()
-@permission_required(perm='main.add_post')
+@permission_required(perm='main.add_post' , raise_exception=True)
 def create_post(request):
 
     if request.method == "POST":
